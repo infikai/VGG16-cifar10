@@ -17,7 +17,7 @@ from tensorflow.keras.datasets import cifar10
 ## Vis
 def vis_pic():
     '''
-	Call this function to show ten random picture in cifar-10 train picture with labe.
+        Call this function to show ten random picture in cifar-10 train picture with labe.
 	Usage:
 	vis_pic()
 	-> windows show ten pictures.
@@ -41,7 +41,7 @@ def set_hyperparameters(case):
     '''
 	This function to set the parameters use to training.
 	If you want to change the value of batch, learning rate, epoch just modify this function.
-	Usage
+	Usage:
 	If you want to show(print) the hyperparameters your have set:
 	epoch, batch, opt = set_hyperparameters(1)
 	-> will print what you have set.
@@ -53,11 +53,11 @@ def set_hyperparameters(case):
     batch = 32
     lr = 0.001
     epoch = 20
-    opt = keras.optimizers.Adam(lr)
+    opt = keras.optimizers.SGD(lr=lr, decay=1e-6, momentum=0.9, nesterov=True)
     if (case == 1):
         print('Batch size:', batch)
         print('learning rate:', lr)
-        print('optimizer: Adam')
+        print('optimizer: SGD')
     return epoch, batch, opt
 
 ### 3. Summary
@@ -136,24 +136,16 @@ def training():
         y_train = to_categorical(y_train, nb_classes)
         y_test = to_categorical(y_test, nb_classes)
 	
-        log_dir = 'saved'
-        os.mkdir(log_dir)
-
         model = creating_vgg16()
         epoch, batch, opt = set_hyperparameters(0)
         h = model.fit(x_train, y_train, batch_size=batch, epochs=epoch, validation_data=(x_test, y_test))
         print('Saving model to disk...')
+	log_dir = 'saved'
+        os.mkdir(log_dir)
+
         model.save('saved/whole_model')
         np.save('my_history.npy',h.history)
         return h.history
-    '''
-    acc, val_acc = h.history['accuracy'], h.history['val_accuracy']
-    m_acc, m_val_acc = np.argmax(acc), np.argmax(val_acc)
-    print("@ Best Training Accuracy: %.2f %% achieved at EP #%d." % (acc[m_acc] * 100, m_acc + 1))
-    print("@ Best Testing Accuracy: %.2f %% achieved at EP #%d." % (val_acc[m_val_acc] * 100, m_val_acc + 1))
-    history_dict = h.history
-    print(history_dict.keys())
-    '''
 
 ### 5. Test
 def test(num):
@@ -238,30 +230,10 @@ def Show_Accuracy():
     accuracy_curve(h)
 
 def main(): 
-    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
     vis_pic()
-    nb_classes = 10
-    y_train = y_train.reshape(y_train.shape[0])
-    y_test = y_test.reshape(y_test.shape[0])
-    x_train = x_train.astype('float32')
-    x_test = x_test.astype('float32')
-    x_train /= 255
-    x_test /= 255
-    y_train = to_categorical(y_train, nb_classes)
-    y_test = to_categorical(y_test, nb_classes)
-    '''
-    ### Datasets for testing code
-    x_train = np.random.random((100, 100, 100, 3))
-    y_train = keras.utils.to_categorical(np.random.randint(10, size=(100, 1)), num_classes=10)
-    x_test = np.random.random((20, 100, 100, 3))
-    y_test = keras.utils.to_categorical(np.random.randint(10, size=(20, 1)), num_classes=10)
-    '''
-    epoch, batch, opt = set_hyperparameters(0)
-    h = training()
+    set_hyperparameters(1)
     Show_Accuracy()
-    accuracy_curve(h)
-    # 0 < num <= 19
-    test(x_test, 10)
+    test(999)
 
 if __name__ == '__main__':
     main()
