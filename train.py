@@ -5,7 +5,6 @@ import random
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-#import scipy.misc
 
 from tensorflow import keras
 from tensorflow.keras import datasets, layers, models
@@ -109,9 +108,14 @@ def creating_vgg16():
     return model
 
 ### Train
-def training(model, batch, epoch, x_train, y_train, x_test, y_test):
+def training():
     '''
 	Training model.
+	It will detect if there have trained model in folder.
+	If have, it will skip training.
+	Usage:
+	h = training()
+	-> return h, it is the history of acc and loss corresbonding to epoch.
     '''
 
     target_folder = 'saved'
@@ -119,8 +123,22 @@ def training(model, batch, epoch, x_train, y_train, x_test, y_test):
     if os.path.exists(target_folder):
         print('Already trained')
     else:
+        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        nb_classes = 10
+        y_train = y_train.reshape(y_train.shape[0])
+        y_test = y_test.reshape(y_test.shape[0])
+        x_train = x_train.astype('float32')
+        x_test = x_test.astype('float32')
+        x_train /= 255
+        x_test /= 255
+        y_train = to_categorical(y_train, nb_classes)
+        y_test = to_categorical(y_test, nb_classes)
+	
         log_dir = 'saved'
         os.mkdir(log_dir)
+
+        model = creating_vgg16()
+        epoch, batch, opt = set_hyperparameters(0)
         h = model.fit(x_train, y_train, batch_size=batch, epochs=epoch, validation_data=(x_test, y_test))
         print('Saving model to disk...')
         model.save('saved/whole_model')
@@ -229,7 +247,6 @@ def main():
     '''
     model = creating_vgg16()
     epoch, batch, opt = set_hyperparameters(0)
-    epoch = 20
     h = training(model, batch, epoch, x_train, y_train, x_test, y_test)
     Show_Accuracy()
     accuracy_curve(h)
