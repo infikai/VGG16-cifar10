@@ -154,7 +154,6 @@ def training():
     history_dict = h.history
     print(history_dict.keys())
     '''
-    return h
 
 ### 5. Test
 def test(num):
