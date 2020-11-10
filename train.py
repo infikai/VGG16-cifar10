@@ -122,6 +122,8 @@ def training():
 
     if os.path.exists(target_folder):
         print('Already trained')
+        h_h = np.load('my_history.npy',allow_pickle='TRUE').item()
+	return h_h
     else:
         (x_train, y_train), (x_test, y_test) = cifar10.load_data()
         nb_classes = 10
@@ -142,7 +144,8 @@ def training():
         h = model.fit(x_train, y_train, batch_size=batch, epochs=epoch, validation_data=(x_test, y_test))
         print('Saving model to disk...')
         model.save('saved/whole_model')
-    
+	np.save('my_history.npy',h.history)
+        return h.history	
     '''
     acc, val_acc = h.history['accuracy'], h.history['val_accuracy']
     m_acc, m_val_acc = np.argmax(acc), np.argmax(val_acc)
@@ -186,7 +189,7 @@ def test(num):
     plt.title('Possibility of item in the picture')
     plt.show
 
-def accuracy_curve(h):
+def accuracy_curve(h_h):
     '''
 	plot a chart of relation between epoch and acc, loss
 	'h' is the history return from model.fit.
@@ -194,7 +197,7 @@ def accuracy_curve(h):
         accuracy_curve(h)
         -> (show the chart)
     '''
-    acc, loss, val_acc, val_loss = h.history['accuracy'], h.history['loss'], h.history['val_accuracy'], h.history['val_loss']
+    acc, loss, val_acc, val_loss = h_h['accuracy'], h_h['loss'], h_h['val_accuracy'], h_h['val_loss']
     epoch = len(acc)
     plt.figure(figsize = (17, 5))
     plt.subplot(121)
@@ -232,9 +235,7 @@ def Show_Accuracy():
     y_train = to_categorical(y_train, nb_classes)
     y_test = to_categorical(y_test, nb_classes)
     # parameters
-    model = creating_vgg16()
-    epoch, batch, opt = set_hyperparameters(0)
-    h = training(model, batch, epoch, x_train, y_train, x_test, y_test)
+    h = training()
     accuracy_curve(h)
 
 def main(): 
@@ -256,9 +257,8 @@ def main():
     x_test = np.random.random((20, 100, 100, 3))
     y_test = keras.utils.to_categorical(np.random.randint(10, size=(20, 1)), num_classes=10)
     '''
-    model = creating_vgg16()
     epoch, batch, opt = set_hyperparameters(0)
-    h = training(model, batch, epoch, x_train, y_train, x_test, y_test)
+    h = training()
     Show_Accuracy()
     accuracy_curve(h)
     # 0 < num <= 19
