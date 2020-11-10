@@ -140,7 +140,7 @@ def training():
         epoch, batch, opt = set_hyperparameters(0)
         h = model.fit(x_train, y_train, batch_size=batch, epochs=epoch, validation_data=(x_test, y_test))
         print('Saving model to disk...')
-	log_dir = 'saved'
+        log_dir = 'saved'
         os.mkdir(log_dir)
 
         model.save('saved/whole_model')
