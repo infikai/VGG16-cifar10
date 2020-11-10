@@ -123,7 +123,7 @@ def training():
     if os.path.exists(target_folder):
         print('Already trained')
         h_h = np.load('my_history.npy',allow_pickle='TRUE').item()
-	return h_h
+        return h_h
     else:
         (x_train, y_train), (x_test, y_test) = cifar10.load_data()
         nb_classes = 10
@@ -144,8 +144,8 @@ def training():
         h = model.fit(x_train, y_train, batch_size=batch, epochs=epoch, validation_data=(x_test, y_test))
         print('Saving model to disk...')
         model.save('saved/whole_model')
-	np.save('my_history.npy',h.history)
-        return h.history	
+        np.save('my_history.npy',h.history)
+        return h.history
     '''
     acc, val_acc = h.history['accuracy'], h.history['val_accuracy']
     m_acc, m_val_acc = np.argmax(acc), np.argmax(val_acc)
@@ -239,7 +239,7 @@ def Show_Accuracy():
 
 def main(): 
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-    vis_pic(x_train, y_train)
+    vis_pic()
     nb_classes = 10
     y_train = y_train.reshape(y_train.shape[0])
     y_test = y_test.reshape(y_test.shape[0])
