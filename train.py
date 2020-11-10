@@ -17,6 +17,12 @@ from tensorflow.keras.datasets import cifar10
 ### 1. Show Pic
 ## Vis
 def vis_pic():
+    '''
+	Call this function to show ten random picture in cifar-10 train picture with labe.
+	Usage:
+	vis_pic()
+	-> windows show ten pictures.
+    '''
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
     label_dict = {0:"airplain",1:"automobile",2:"bird",3:"cat",4:"deer",5:"dog",6:"frog",7:"horse",8:"ship",9:"truck"}
     fig = plt.gcf()
@@ -29,9 +35,22 @@ def vis_pic():
         ax.set_title(title, fontsize=10)
         plt.axis('off')
     plt.show()
+
 ### 2. Show hyper -> set_hyperparameters(1)
 ## Set hyperparameters
 def set_hyperparameters(case):
+    '''
+	This function to set the parameters use to training.
+	If you want to change the value of batch, learning rate, epoch just modify this function.
+	Usage
+	If you want to show(print) the hyperparameters your have set:
+	epoch, batch, opt = set_hyperparameters(1)
+	-> will print what you have set.
+
+	If youu just want set:
+	epoch, batch, opt = set_hyperparameters(0)
+        -> just return the value of (epoch, batch, opt)
+    '''
     batch = 32
     lr = 0.001
     epoch = 20
@@ -41,9 +60,18 @@ def set_hyperparameters(case):
         print('learning rate:', lr)
         print('optimizer: Adam')
     return epoch, batch, opt
+
 ### 3. Summary
 ## Create Model VGG-16
 def creating_vgg16():
+    '''
+	Creating VGG16 model, for cifar-10 the inputs shape is (32,32,3).
+	When calling this function, it will show the 'summary' of the miodel.
+	Usage:
+	creating_vgg16()
+	-> (model summary of 'my_VGG16')
+
+    '''
     model = models.Sequential(name="my_VGG16")
     model.add(keras.Input(shape=(32,32,3)))
     #model.add(keras.Input(shape=(100,100,3)))
@@ -79,8 +107,12 @@ def creating_vgg16():
     model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
     model.summary()
     return model
+
 ### Train
 def training(model, batch, epoch, x_train, y_train, x_test, y_test):
+    '''
+	Training model.
+    '''
 
     target_folder = 'saved'
 
@@ -104,7 +136,14 @@ def training(model, batch, epoch, x_train, y_train, x_test, y_test):
     return h
 
 ### 5. Test
-def test(x_test, num):
+def test(x_test,  num):
+    '''
+        Testing a picture in test datasets, and show the result in a window.
+	The number of 'num' need between 0~9999.
+	Usage:
+	test(x_test,  10):
+	-> (window of result)
+    '''
     model = models.load_model('saved/whole_model')
     test_img = x_test[num:num+1]
     predicted = model.predict(test_img, verbose=1)
@@ -119,6 +158,13 @@ def test(x_test, num):
     plt.show
 
 def accuracy_curve(h):
+    '''
+	plot a chart of relation between epoch and acc, loss
+	'h' is the history return from model.fit.
+	Usage:
+        accuracy_curve(h)
+        -> (show the chart)
+    '''
     acc, loss, val_acc, val_loss = h.history['accuracy'], h.history['loss'], h.history['val_accuracy'], h.history['val_loss']
     epoch = len(acc)
     plt.figure(figsize = (17, 5))
@@ -139,6 +185,12 @@ def accuracy_curve(h):
 
 ### 4. Show Accuracy
 def Show_Accuracy():
+    '''
+	To show the trained-model's accuracy by the chart.
+	Usage:
+	Show_Accuracy()
+	-> (window show result)
+    '''
     # data
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
     nb_classes = 10
@@ -156,8 +208,7 @@ def Show_Accuracy():
     h = training(model, batch, epoch, x_train, y_train, x_test, y_test)
     accuracy_curve(h)
 
-def main():
-    
+def main(): 
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
     vis_pic(x_train, y_train)
     nb_classes = 10
@@ -180,6 +231,7 @@ def main():
     epoch, batch, opt = set_hyperparameters(0)
     epoch = 20
     h = training(model, batch, epoch, x_train, y_train, x_test, y_test)
+    Show_Accuracy()
     accuracy_curve(h)
     # 0 < num <= 19
     test(x_test, 10)
