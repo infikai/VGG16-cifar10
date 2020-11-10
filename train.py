@@ -154,7 +154,7 @@ def training():
     return h
 
 ### 5. Test
-def test(x_test,  num):
+def test(num):
     '''
         Testing a picture in test datasets, and show the result in a window.
 	The number of 'num' need between 0~9999.
@@ -162,6 +162,17 @@ def test(x_test,  num):
 	test(x_test,  10):
 	-> (window of result)
     '''
+    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+    nb_classes = 10
+    y_train = y_train.reshape(y_train.shape[0])
+    y_test = y_test.reshape(y_test.shape[0])
+    x_train = x_train.astype('float32')
+    x_test = x_test.astype('float32')
+    x_train /= 255
+    x_test /= 255
+    y_train = to_categorical(y_train, nb_classes)
+    y_test = to_categorical(y_test, nb_classes)
+
     model = models.load_model('saved/whole_model')
     test_img = x_test[num:num+1]
     predicted = model.predict(test_img, verbose=1)
