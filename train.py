@@ -153,7 +153,7 @@ def test(num):
         Testing a picture in test datasets, and show the result in a window.
 	The number of 'num' need between 0~9999.
 	Usage:
-	test(x_test,  10):
+	test(10):
 	-> (window of result)
     '''
     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
@@ -176,7 +176,9 @@ def test(num):
     plt.imshow(x_test[num], cmap='binary')
 
     plt.subplot(122)
-    plt.hist(predicted[0], color = 'blue')
+    index = np.arange(10)
+    plt.bar(index, predicted[0], 0.7, color='blue')
+    plt.xticks(index, ['airplain', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck'], rotation=30)
     plt.title('Possibility of item in the picture')
     plt.show
 
